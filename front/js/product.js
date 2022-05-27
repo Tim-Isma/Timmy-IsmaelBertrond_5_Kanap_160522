@@ -2,17 +2,19 @@ const id = window.location.search.split("?").join("");
 
 //console.log(id);
 
-let tabData = [];
+let productTableData = [];
 
+
+console.log(id);
 
 const fetchProduct = async () => {
     await fetch(`http://localhost:3000/api/products/${id}`)
     .then((responseData) => { 
         return responseData.json()
     })
-    .then((productData) =>  {
-        tabData = productData;
-        console.log(productData);
+    .then((productsData) =>  {
+        productTableData = productsData;
+        console.log(productsData);
     })
     .catch(function(error) {
         document.querySelector("section").innerHTML = "<section>erreur 404 !</section>"
@@ -20,65 +22,100 @@ const fetchProduct = async () => {
     })
 }
 
+
+
 const displayProduct = async () => {
     await fetchProduct();
 
-    document.querySelector(".item__img").innerHTML = `<img src="${tabData.imageUrl}" alt="${tabData.altTxt}">`;
+    document.querySelector("article div.item__img").innerHTML = `<img src="${productTableData.imageUrl}" alt="${productTableData.altTxt}">`;
 
-    document.getElementById("title").innerHTML = `${tabData.name}`;
+    document.getElementById("title").innerHTML = `${productTableData.name}`;
 
-    document.getElementById("price").innerHTML = `${tabData.price}`;
+    document.getElementById("price").innerHTML = `${productTableData.price}`;
 
-    document.getElementById("description").innerHTML = `${tabData.description}`;
+    document.getElementById("description").innerHTML = `${productTableData.description}`;
 
-    //console.log(tabData.colors);
+    document.querySelector("div .item__content__addButton").innerHTML = `<button id="${productTableData._id}">Ajouter au panier</button>`;
 
-    let colorSelect = document.getElementById("colors");
+    let colorOption = document.getElementById("colors");
 
-    for(let tabColors of tabData.colors) {
+    for(let color of productTableData.colors) {
         
-       colorSelect.innerHTML += `<option value="${tabColors}">${tabColors}</option>`;
+        colorOption.innerHTML += `<option value="${color}">${color}</option>`;
     }
 
-    //console.log(addBasket)
-
-    addBasket();
-} 
+    addBasket(productTableData);
+};
 
 displayProduct();
 
-
-
 const addBasket = function () {
-    let button = document.getElementById("addToCart")
-    //console.log(button);
 
-    this.addEventListener("click", function() {
-        let tabProduct = JSON.parse(localStorage.getItem("product"))
-        let select = document.getElementById("colors");
-        //console.log(select.value);
-        //console.log(tabProduct);
+    let button = document.getElementById(productTableData._id);
+    console.log(button);
+  
+    let quantityLimited = document.querySelector("#quantity");
 
-        const assignColorProduct = Object.assign({}, tabData, {
-            tint : `${select.value}`,
-            quantity : 1,
-        });
+    button.addEventListener("click", function() {
+    
+        let productTable = JSON.parse(localStorage.getItem("product"));
 
-        console.log(assignColorProduct);
+        let colorOption = document.getElementById("colors");
 
-        if(tabProduct == null) {
-            tabProduct = []
-            tabProduct.push(assignColorProduct);
-            //console.log(tabProduct);
-            localStorage.setItem("product",JSON.stringify(tabProduct));
+        if(quantityLimited.value > 0 &&  quantityLimited.value < 100) {
+
+            document.getElementById(productTableData._id).style.color = "green";
+            document.getElementById(productTableData._id).textContent = "Produit ajouté";  
+        
+            let table = {
+                imageUrl : (productTableData.imageUrl), 
+                name : (productTableData.name),
+                price : (productTableData.price), 
+                color : (colorOption.value),
+                quantity : parseInt(document.getElementById("quantity").value),
+                _id : (productTableData._id),
+            }
+            // et...
+            if(productTable == null) { 
+                productTable = [];
+                productTable.push(table);
+                localStorage.setItem("product", JSON.stringify(productTable));   
+                console.log(productTable);
+            }
+            else if(productTable != null) {
+                for(i= 0; i < productTable.length; i++) {
+                    console.log("test");
+                    if(productTable[i]._id == productTableData._id && productTable[i].color == colorOption.value) {
+                        
+                        return(
+                        productTable[i].quantity++,
+                        console.log("quantity++"),
+                        localStorage.setItem("product" ,JSON.stringify(productTable)),
+                        (productTable = JSON.parse(localStorage.getItem("product")))
+                        );
+                    }
+                }
+
+                for(i= 0; i < productTable.length; i++) {
+                    console.log("test");
+                    if(productTable[i]._id == productTableData._id && productTable[i].color != colorOption.value || productTable[i]._id != productTableData._id) {
+                        console.log(colorOption.value);
+
+                        return(console.log("New"),
+                        productTable.push(table),
+                        localStorage.setItem("product" ,JSON.stringify(productTable)),
+                        (productTable = JSON.parse(localStorage.getItem("product")))
+                        );
+                    }
+                }
+            }
+            
+        }else{
+            alert("Veuillez indiquer la quantité !");
         }
+
     });
+    return (productTable = JSON.parse(localStorage.getItem("product")));
 };
-
-
-
-
-
-
 
 
