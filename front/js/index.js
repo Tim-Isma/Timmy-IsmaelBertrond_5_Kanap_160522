@@ -13,7 +13,7 @@ const fetchProducts = async () => {
     // erreur. 
     .catch(function(error) {
         document.querySelector("section").innerHTML = "<section>erreur 404 !</section>"
-        alert(`${error} Un problème est survenu ! Les données sur l'api ne peuvent pas être récupérés`)
+        console.log(error);
     })   
 };
 
@@ -36,9 +36,6 @@ const articlesData = function (article) {
     let card = document.querySelector("section"); document.querySelectorAll("a");
     console.log(card)
     
-    /*card.addEventListener("click", function() {
-        console.log(card)
-    });*/
 }
 
 fetchProducts();

@@ -1,23 +1,22 @@
-const product = window.location.search.split("?").join("");
+const id = window.location.search.split("?").join("");
 
-console.log(product);
+//console.log(id);
 
 let tabData = [];
 
-//console.log(tabData);
 
 const fetchProduct = async () => {
-    await fetch(`http://localhost:3000/api/products/${product}`)
+    await fetch(`http://localhost:3000/api/products/${id}`)
     .then((responseData) => { 
         return responseData.json()
     })
     .then((productData) =>  {
         tabData = productData;
-        console.log(tabData);
+        console.log(productData);
     })
     .catch(function(error) {
         document.querySelector("section").innerHTML = "<section>erreur 404 !</section>"
-        alert(`${error} Un problème est survenu ! Les données sur l'api ne peuvent pas être récupérés`)
+        console.log(error);
     })
 }
 
@@ -32,34 +31,36 @@ const displayProduct = async () => {
 
     document.getElementById("description").innerHTML = `${tabData.description}`;
 
-    console.log(tabData.colors);
+    //console.log(tabData.colors);
 
-    let colorSelection = document.getElementById("colors");
+    let colorSelect = document.getElementById("colors");
 
     for(let tabColors of tabData.colors) {
         
-       colorSelection.innerHTML += `<option value="${tabColors}">${tabColors}</option>`;
+       colorSelect.innerHTML += `<option value="${tabColors}">${tabColors}</option>`;
     }
 
-    addBasket(tabData);
+    //console.log(addBasket)
+
+    addBasket();
 } 
 
-displayProduct()
+displayProduct();
 
 
 
 const addBasket = function () {
     let button = document.getElementById("addToCart")
-    console.log(button);
+    //console.log(button);
 
     this.addEventListener("click", function() {
         let tabProduct = JSON.parse(localStorage.getItem("product"))
         let select = document.getElementById("colors");
-        console.log(select.value);
-        console.log(tabProduct);
+        //console.log(select.value);
+        //console.log(tabProduct);
 
         const assignColorProduct = Object.assign({}, tabData, {
-            color : `${select.value}`,
+            tint : `${select.value}`,
             quantity : 1,
         });
 
@@ -68,7 +69,7 @@ const addBasket = function () {
         if(tabProduct == null) {
             tabProduct = []
             tabProduct.push(assignColorProduct);
-            console.log(tabProduct);
+            //console.log(tabProduct);
             localStorage.setItem("product",JSON.stringify(tabProduct));
         }
     });
