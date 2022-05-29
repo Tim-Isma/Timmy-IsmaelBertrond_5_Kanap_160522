@@ -60,62 +60,63 @@ const addBasket = function () {
     
         let productTable = JSON.parse(localStorage.getItem("product"));
 
-        let colorOption = document.getElementById("colors");
-
-        if(quantityLimited.value > 0 &&  quantityLimited.value < 100) {
-
-            document.getElementById(productTableData._id).style.color = "green";
-            document.getElementById(productTableData._id).textContent = "Produit ajouté";  
+        let colorOption = document.getElementById("colors").value;
         
-            let table = {
-                imageUrl : (productTableData.imageUrl), 
-                name : (productTableData.name),
-                price : (productTableData.price), 
-                color : (colorOption.value),
-                quantity : parseInt(document.getElementById("quantity").value),
-                _id : (productTableData._id),
-            }
-            // et...
-            if(productTable == null) { 
-                productTable = [];
-                productTable.push(table);
-                localStorage.setItem("product", JSON.stringify(productTable));   
-                console.log(productTable);
-            }
-            else if(productTable != null) {
-                for(i= 0; i < productTable.length; i++) {
-                    console.log("test");
-                    if(productTable[i]._id == productTableData._id && productTable[i].color == colorOption.value) {
-                        
-                        return(
-                        productTable[i].quantity++,
-                        console.log("quantity++"),
-                        localStorage.setItem("product" ,JSON.stringify(productTable)),
-                        (productTable = JSON.parse(localStorage.getItem("product")))
-                        );
-                    }
-                }
-
-                for(i= 0; i < productTable.length; i++) {
-                    console.log("test");
-                    if(productTable[i]._id == productTableData._id && productTable[i].color != colorOption.value || productTable[i]._id != productTableData._id) {
-                        console.log(colorOption.value);
-
-                        return(console.log("New"),
-                        productTable.push(table),
-                        localStorage.setItem("product" ,JSON.stringify(productTable)),
-                        (productTable = JSON.parse(localStorage.getItem("product")))
-                        );
-                    }
-                }
-            }
-            
-        }else{
-            alert("Veuillez indiquer la quantité !");
+        let quantityOption = parseInt(document.getElementById("quantity").value);
+        
+        // Ajout d'un produit dans le local storage.
+        const addProductLocalStorage = () => {
+            productTable.push(table);
+            localStorage.setItem("product", JSON.stringify(productTable)); 
         }
+        // Confirmation...
+        const popupConfirmation = () => {
+            if(window.confirm(`${productTableData.name} de couleur ${colorOption} avec une quantité de 
+            ${quantityOption} a bien été ajouté dans le panier. Cliquer sur OK pour consulter le panier 
+            ou sur ANNULER pour revenir à l'accueil `)) {
+                window.location.href = "./cart.html";
+            }else{
+                window.location.href = "./index.html";
+            }
+        }
+        // 
+        let table = {
+            imageUrl : (productTableData.imageUrl), 
+            name : (productTableData.name),
+            price : (productTableData.price), 
+            color : (colorOption),
+            quantity : (quantityOption),
+            _id : (productTableData._id),
+        }
+        // Ajout au panier...
+        const addProductBasket = () => {
+            if(productTable) { 
+                addProductLocalStorage(); 
+                console.log(productTable);
+                popupConfirmation();
+            }else{
+                productTable = [];
+                addProductLocalStorage();  
+                console.log(productTable);
+                popupConfirmation();
+            }
+        };
+        // 
+        const quantityNumber = () => {
+            if(quantityLimited.value > 0 &&  quantityLimited.value < 100) {
+                addProductBasket();
+                document.getElementById(productTableData._id).style.color = "green";
+                document.getElementById(productTableData._id).textContent = "Produit ajouté";
+            }else{
+                alert("Veuillez indiquer la quantité !");
+            }
+        };
 
+        quantityNumber();
+
+            
     });
-    return (productTable = JSON.parse(localStorage.getItem("product")));
+    //return (productTable = JSON.parse(localStorage.getItem("product")));
 };
 
 

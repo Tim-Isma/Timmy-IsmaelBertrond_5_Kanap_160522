@@ -2,23 +2,19 @@ let addProduct = JSON.parse(localStorage.getItem("product"));
 
 console.log(addProduct);
 
-let  productCustomer = {};
-
 
 const basketDisplay = async function () {
-    console.log("salut");
     if (addProduct) {
         await addProduct;
-        console.log(addProduct);
 
         let cart = document.getElementById("cart__items");
 
-        console.log(cart);
+        //console.log(cart);
 
         for (let cartDisplay of addProduct) {
 
         cart.innerHTML = `
-        <article class="cart__item" data-id="${cartDisplay._id}" data-color="${cartDisplay.tint}">
+        <article class="cart__item" data-id="${cartDisplay._id}" data-color="${cartDisplay.color}">
             <div class="cart__item__img">
             <img src="${cartDisplay.imageUrl}" alt="${cartDisplay.altTxt}">
             </div>
@@ -51,3 +47,4 @@ const basketDisplay = async function () {
 }
 
 basketDisplay()
+
