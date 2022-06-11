@@ -1,14 +1,14 @@
-// Appel à la méthode fetch avec l'url qu'il faudra contacter pour récupérer les données dans l'api.
+// J'appel à la méthode fetch avec l'url qu'il faudra contacter pour récupérer les données dans l'api.
 const fetchProducts = async () => {
     await fetch("http://localhost:3000/api/products")
     // Je récupére les données au format json.
     .then((responseData) => { 
         return responseData.json()
     })
-    // traitement des produits.
-    .then((articles) =>  {
-        articlesData(articles);
-        console.log(articles);
+    // Les produits vont être traités.
+    .then((products) =>  {
+        productsData(products);
+        console.log(products);
     })
     // erreur. 
     .catch(function(error) {
@@ -17,26 +17,25 @@ const fetchProducts = async () => {
     })   
 };
 
-const articlesData = function (article) {
-    let items = document.querySelector("#items");
+// Je créé la fonction "productsData" dans laquelle je passe le paramètre "kanaps", afin de pouvoir la manipuler dans ma boucle for.
+const productsData = (kanaps) => {
+// Je récupère les produits dans le DOM.
+    let displayProducts = document.getElementById("items");
     
+//Je créé une boucle for, afin d'afficher tout les produits sur la page index.
+    for (let product of kanaps) {
 
-    for (let tabArticles of article) {
-
-    items.innerHTML += `
-    <a href="./product.html?${tabArticles._id}">
+    displayProducts.innerHTML += `
+    <a href="./product.html?${product._id}">
         <article>
-            <img src="${tabArticles.imageUrl}" alt="${tabArticles.altTxt}"> 
-            <h3 class="productName">${tabArticles.name}</h3>
-            <p class="productDescription">${tabArticles.description}</p>
+            <img src="${product.imageUrl}" alt="${product.altTxt}"> 
+            <h3 class="productName">${product.name}</h3>
+            <p class="productDescription">${product.description}</p>
         </article>
     </a>`;
     }
-
-    let card = document.querySelector("section"); document.querySelectorAll("a");
-    console.log(card)
-    
-}
+    console.table(kanaps); 
+};
 
 fetchProducts();
 
