@@ -1,9 +1,9 @@
 //Récupération de l'id du produit.
 const id = window.location.search.split("?").join("");
 console.log(id);
-
+// Création d'un tableau pour introduire les données du produit.
 let productTableData = [];
-
+// J'appel à la méthode fetch avec l'url + l'id, afin de récupérer les données du produit dans l'api.
 const fetchProducts = async () => {
     await fetch(`http://localhost:3000/api/products/${id}`)
     // Je récupére les données au format json.
@@ -21,7 +21,6 @@ const fetchProducts = async () => {
         console.log(error);
     })
 }
-
 
 // je récupère toutes les données du produit dans le DOM, afin de pouvoir les afficher sur la page product.
 const displayProduct = async () => {
@@ -56,7 +55,7 @@ const addBasket = function () {
     console.log(button);
   
     let quantityLimited = document.querySelector("#quantity");
-
+    
     button.addEventListener("click", function() {
     
         let productRegisteredInTheLocalStorage = JSON.parse(localStorage.getItem("product"));
@@ -92,15 +91,37 @@ const addBasket = function () {
         }
         // Ajout au panier...
         const addProductBasket = () => {
-            if(productRegisteredInTheLocalStorage) { 
+            if(productRegisteredInTheLocalStorage == null) {
+                productRegisteredInTheLocalStorage = []; 
                 addProductLocalStorage(); 
                 console.log(productRegisteredInTheLocalStorage);
                 popupConfirmation();
-            }else{
-                productRegisteredInTheLocalStorage = [];
-                addProductLocalStorage();  
-                console.log(productRegisteredInTheLocalStorage);
-                popupConfirmation();
+            } else if (productRegisteredInTheLocalStorage != null){
+                for (let i = 0; i < productRegisteredInTheLocalStorage.length; i++) {
+                    if (productRegisteredInTheLocalStorage[i]._id == productTableData._id && productRegisteredInTheLocalStorage[i].color == colorOption) {
+                        return(
+                            productRegisteredInTheLocalStorage[i].quantity += quantityOption,
+                            console.log("quantity++"),
+                            localStorage.setItem("product", JSON.stringify(productRegisteredInTheLocalStorage)),
+                            (productRegisteredInTheLocalStorage = JSON.parse(localStorage.getItem("product"))),
+                            popupConfirmation()
+                            );
+                    }
+                }
+                for (let a = 0; a < productRegisteredInTheLocalStorage.length; a++) {
+                    if (
+                        (productRegisteredInTheLocalStorage[a]._id == productTableData._id && 
+                        productRegisteredInTheLocalStorage[a].color != colorOption) || 
+                        productRegisteredInTheLocalStorage[a]._id != productTableData._id
+                        ) {
+                        return(
+                            console.log("new"),
+                            addProductLocalStorage(),
+                            (productRegisteredInTheLocalStorage = JSON.parse(localStorage.getItem("product"))),
+                            popupConfirmation()
+                            );
+                    }
+                }
             }
         };
         // 

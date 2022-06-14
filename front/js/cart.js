@@ -187,12 +187,12 @@ const totalCartPrice = () => {
     //-------------------- Affichage du prix total du panier --------------------//
 
     let displayTotalPrice = document.getElementById("totalPrice").innerHTML = `${totalPrice}`;
-
+    console.log(displayTotalPrice);
 };
 totalCartPrice();
 //-------------------- Envoie du formulaire vers le serveur --------------------//
 //-------------------------------------------------
-const sendForm = document.getElementById("order");
+const sendOrder = document.getElementById("order");
 
 let firstName = document.getElementById("firstName");
 let lastName = document.getElementById("lastName");
@@ -200,7 +200,7 @@ let address = document.getElementById("address");
 let city = document.getElementById("city");
 let email = document.getElementById("email");
 
-sendForm.addEventListener("click", (event) => {
+sendOrder.addEventListener("click", (event) => {
     event.preventDefault(); 
     
     if(
@@ -213,10 +213,12 @@ sendForm.addEventListener("click", (event) => {
         alert("Veuillez renseigner tout les champs de ce formulaire !");
     }else{
     
-        let products = [];
-        products.push(productRegisteredInTheLocalStorage);
+        let productsOrder = [];
+        for(let indice of productRegisteredInTheLocalStorage) {
+        productsOrder.push(indice._id);
+        };
 
-        const newOrder = {
+        const order = {
             contact : {
                 firstName : firstName.value,
                 lastName : lastName.value,
@@ -224,29 +226,37 @@ sendForm.addEventListener("click", (event) => {
                 city : city.value,
                 email : email.value,
             },
-            products : products, 
+            products : productsOrder,
+        };
+        console.log(order);
+
+        finalPrice = document.getElementById("totalPrice").innerText;
+        console.log(finalPrice);
+
+        const options =  {
+            method: "POST",
+            body: JSON.stringify(order),
+            headers: {
+                Accept: 'application/json',
+                'Content-type': 'application/json',
+            },
         };
 
-        console.log(newOrder);
 
-// Mettre l'objet "order" dans le local storage
-
-//localStorage.setItem("dataOrder", JSON.stringify(dataOrder));
-
-
-        const OPTIONS = {
+/*
+        const OPTIONS = fetch(`http://localhost:3000/api/products/order`, {
             method: "POST",
             body: JSON.stringify(newOrder),
             headers: {
                 Accept: 'application/json',
                 'Content-type': 'application/json',
             },
-        };
+        });
         
-        fetch("http://localhost:3000/api/products/order", OPTIONS)
-            .then( response => {
+        
+            OPTIONS.then( response => {
                 try {
-                    window.location.href = "confirmation.html";
+                    //window.location.href = "/front/html/confirmation.html";
                     console.log(response);
                     const data = response.json();
                     console.log(data);
@@ -254,8 +264,20 @@ sendForm.addEventListener("click", (event) => {
                     console.log(error);
                 }
             });
+*/
+        fetch("http://localhost:3000/api/products/order", options)
+                .then((response) => response.json())
+                .then((data) => {
+                localStorage.clear();
+                console.log(data)
+                localStorage.setItem("orderId", data.orderId);
+                //localStorage.setItem("total", finalPrice);
 
-        
+                document.location.href = "confirmation.html";
+                })
+                .catch((error) => {
+                alert(`Il y a eu une erreur : ${error}`);
+                });  
     }
 });
 
