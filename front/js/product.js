@@ -42,19 +42,16 @@ const displayProduct = async () => {
         
         colorOption.innerHTML += `<option value="${color}">${color}</option>`;
     }
-
-    addBasket(productTableData);
+    addBasket();//(productTableData)
 };
-
 displayProduct();
-
 
 const addBasket = function () {
 
-    let button = document.getElementById(productTableData._id);
-    console.log(button);
+let button = document.getElementById(productTableData._id);
+console.log(button);
   
-    let quantityLimited = document.querySelector("#quantity");
+let quantityLimited = document.querySelector("#quantity");
     
     button.addEventListener("click", function() {
     
@@ -69,7 +66,7 @@ const addBasket = function () {
             productRegisteredInTheLocalStorage.push(table);
             localStorage.setItem("product", JSON.stringify(productRegisteredInTheLocalStorage)); 
         }
-        // Popup de Confirmation...
+        // Popup de Confirmation, qui affiche le nom, la couleur et la quantité du produit. Qui va permettre lorsque le produit est ajouté au panier, d'afficher une popup qui nous proposera soit d'aller directement au panier ou à l'accueil.
         const popupConfirmation = () => {
             if(window.confirm(`${productTableData.name} de couleur ${colorOption} avec une quantité de 
             ${quantityOption} a bien été ajouté dans le panier. Cliquer sur OK pour consulter le panier 
@@ -79,7 +76,7 @@ const addBasket = function () {
                 window.location.href = "./index.html";
             }
         }
-        // 
+        // J'ai créé un objet contenant les clés et les valeurs spécifique aux données du produit
         let table = {
             imageUrl : (productTableData.imageUrl),
             altTxt : (productTableData.altTxt), 
@@ -89,19 +86,21 @@ const addBasket = function () {
             quantity : (quantityOption),
             _id : (productTableData._id),
         }
-        // Ajout au panier...
+        
         const addProductBasket = () => {
+            // Lorsque le panier est vide, il ajoute un produit.
             if(productRegisteredInTheLocalStorage == null) {
                 productRegisteredInTheLocalStorage = []; 
                 addProductLocalStorage(); 
                 console.log(productRegisteredInTheLocalStorage);
                 popupConfirmation();
             } else if (productRegisteredInTheLocalStorage != null){
-                for (let i = 0; i < productRegisteredInTheLocalStorage.length; i++) {
-                    if (productRegisteredInTheLocalStorage[i]._id == productTableData._id && productRegisteredInTheLocalStorage[i].color == colorOption) {
+                // Lorsque le panier à reçu un produit avec le même "id" et la même "couleur", alors les quantités seront additionnées. 
+                for (let q = 0; q < productRegisteredInTheLocalStorage.length; q++) {
+                    if (productRegisteredInTheLocalStorage[q]._id == productTableData._id && productRegisteredInTheLocalStorage[q].color == colorOption) {
                         return(
-                            productRegisteredInTheLocalStorage[i].quantity += quantityOption,
-                            console.log("quantity++"),
+                            productRegisteredInTheLocalStorage[q].quantity += quantityOption,
+                            console.log("add quantity"),
                             localStorage.setItem("product", JSON.stringify(productRegisteredInTheLocalStorage)),
                             (productRegisteredInTheLocalStorage = JSON.parse(localStorage.getItem("product"))),
                             popupConfirmation()
@@ -109,6 +108,7 @@ const addBasket = function () {
                     }
                 }
                 for (let a = 0; a < productRegisteredInTheLocalStorage.length; a++) {
+                // Ajoute un nouveau produit, lorsque l'"id" ou la "couleur" est différent.
                     if (
                         (productRegisteredInTheLocalStorage[a]._id == productTableData._id && 
                         productRegisteredInTheLocalStorage[a].color != colorOption) || 
@@ -124,20 +124,20 @@ const addBasket = function () {
                 }
             }
         };
-        // 
+
+        // Je créé une fonction qui va permettre de donner une limite au niveau de la selection de la quantité.
         const quantityNumber = () => {
-            if(quantityLimited.value > 0 &&  quantityLimited.value < 100) {
+            // la commande du produit est valide, lorsque la quantité est supérieur à "0" et inférieur ou égale à 100.
+            if(quantityLimited.value > 0 &&  quantityLimited.value <= 100) {
                 addProductBasket();
                 document.getElementById(productTableData._id).style.color = "green";
                 document.getElementById(productTableData._id).textContent = "Produit ajouté";
+            // Si la quantité est inférieur à 1 ou supérieur à 100, un message s'affichera et la commande du produit ne pourra pas être validé.   
             }else{
-                alert("Veuillez indiquer la quantité !");
+                alert("Veuillez indiquer la bonne quantité !");
             }
         };
-
-        quantityNumber();
-
-            
+        quantityNumber();      
     });
 };
 

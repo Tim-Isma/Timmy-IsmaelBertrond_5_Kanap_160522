@@ -1,23 +1,21 @@
-// Récupération des données dans le local storage
+// Je récupére les données dans le local storage
 let productRegisteredInTheLocalStorage = JSON.parse(localStorage.getItem("product"));
+console.table(productRegisteredInTheLocalStorage);
 
-console.log(productRegisteredInTheLocalStorage);
+//-------------------- Affichage des produits commandés --------------------//
 
-//-------------------- Affichage et récupération de la commande dans le local storage --------------------//
-
-    let cart = document.getElementById("cart__items");
-
-    let displayNumber = document.getElementById("numberProducts");
+let cart = document.getElementById("cart__items");
+let displayNumber = document.getElementById("numberProducts");
 
 const displayAllProducts = () => {
-    // Condition qui détermine si le panier est vide ou plein...
+    // Si le panier est vide, on créer un tableau vide, afin d'introduire tout les produits.
     if(productRegisteredInTheLocalStorage == null) {
         productRegisteredInTheLocalStorage = [];
     }else{
+    // On créer un tableau vide, afin d'introduire les données d'un produit.
         let numberOfProductInBasket = [];
-
+    // On créer une boucle for, afin de pouvoir checker tout les produits provenant du local storage.
         for(n = 0; n < productRegisteredInTheLocalStorage.length; n++) {
-
             numberOfProductInBasket = numberOfProductInBasket + `
             <article class="cart__item" data-id="${productRegisteredInTheLocalStorage[n]._id}" data-color="${productRegisteredInTheLocalStorage[n].color}">
                 <div class="cart__item__img">
@@ -41,7 +39,7 @@ const displayAllProducts = () => {
                 </div>
             </article>`;
         }
-    
+        // Si n est égale aux nombres de produits dans le tableau "productRegisteredInTheLocalStorage", alors affiche moi tout les tableaux "numberOfProductInBasket" 
         if(n == productRegisteredInTheLocalStorage.length) {
             cart.innerHTML = numberOfProductInBasket;
         }
@@ -51,18 +49,18 @@ displayAllProducts();
 
 //-------------------- Changer la quantité --------------------//
 
-const plusQuantite = async (displayAllProducts) => {
+const changeQuantity = async (displayAllProducts) => {
     await displayAllProducts;
-    console.log("fonction plus");
-    let plus = document.querySelectorAll(".cart__item");
-    console.log(plus);
-    plus.forEach((positive) => {
-        positive.addEventListener("change", (e) => {
+    console.log("changeQuantity");
+    let moreQuantity = document.querySelectorAll(".cart__item");
+    console.log(moreQuantity.innerHTML);
+    moreQuantity.forEach((selectQuantity) => {
+        selectQuantity.addEventListener("change", (e) => {
             e.preventDefault();
-            console.log(positive);
+            console.log(selectQuantity);
         
             for(z = 0; z < productRegisteredInTheLocalStorage.length; z++) {
-                if(productRegisteredInTheLocalStorage[z]._id == positive.dataset.id && productRegisteredInTheLocalStorage[z].color == positive.dataset.color) {
+                if(productRegisteredInTheLocalStorage[z]._id == selectQuantity.dataset.id && productRegisteredInTheLocalStorage[z].color == selectQuantity.dataset.color) {
                     return productRegisteredInTheLocalStorage[z].quantity =+ e.target.value,
                     localStorage.setItem("product", JSON.stringify(productRegisteredInTheLocalStorage)),
                     (document.querySelectorAll(".cart__item__content__settings__quantity p")[z].innerHTML = `Qté : ${productRegisteredInTheLocalStorage[z].quantity}`),
@@ -72,20 +70,18 @@ const plusQuantite = async (displayAllProducts) => {
             }
         });
     });
-}
-plusQuantite();
+};
+changeQuantity();
 
 //-------------------- Suppression produit --------------------//
 // Function...
 let deleteProduct = document.querySelectorAll(".deleteItem");
-
-console.log(deleteProduct);
-
+console.table(deleteProduct);
     for(let d = 0; d < deleteProduct.length; d++) {
         deleteProduct[d].addEventListener("click" , (event) => {
             event.preventDefault();
             console.log(event);
-            let del = productRegisteredInTheLocalStorage.splice([d], 1);
+            let del = productRegisteredInTheLocalStorage.splice([d]);
             console.log(del);
             
             localStorage.setItem("product", JSON.stringify(productRegisteredInTheLocalStorage));
@@ -95,7 +91,7 @@ console.log(deleteProduct);
             window.location.reload();
             window.location.href = "#cart__items";
         });
-    }
+    };
 
 //-------------------- Affichage du nombre de références --------------------//
 
@@ -115,33 +111,23 @@ const numberOfReference = () => {
         console.log(number);  
     }
 };
-
 numberOfReference();
-
 
 //-------------------- La quantité total du panier --------------------//
 
-totalCartQuantity = () => {
+const totalCartQuantity = () => {
+    let tableTotalQuantity = [];
 
-        let tableTotalQuantity = [];
+    for(let q = 0; q < productRegisteredInTheLocalStorage.length; q++) {
+        let productsQuantity = productRegisteredInTheLocalStorage[q].quantity;
+        tableTotalQuantity.push(productsQuantity);
+        console.log(tableTotalQuantity);  
+    }
 
-        for(let q = 0; q < productRegisteredInTheLocalStorage.length; q++) {
-            let productsQuantity = productRegisteredInTheLocalStorage[q].quantity;
-            
-            tableTotalQuantity.push(productsQuantity);
-
-            console.log(tableTotalQuantity);
-            
-        }
-
-        const reducerQuantity = (accumulator, currentValue) => accumulator + currentValue;
-
-        const totalQuantity = tableTotalQuantity.reduce(reducerQuantity,0);
-
-        console.log(totalQuantity);
+    const reducerQuantity = (accumulator, currentValue) => accumulator + currentValue;
+    const totalQuantity = tableTotalQuantity.reduce(reducerQuantity,0);
+    console.log(totalQuantity);
        
-
-
     //-------------------- Affichage de la quantité total du panier --------------------//
 
     let displayTotalQuantity = document.getElementById("totalQuantity");
@@ -164,24 +150,21 @@ totalCartQuantity = () => {
     numberOfItem();
 };
 totalCartQuantity();
-//-------------------- Le montant total du panier --------------------//
-const totalCartPrice = () => {
 
+//-------------------- Le montant total du panier --------------------//
+
+const totalCartPrice = () => {
     let tableTotalPrice = [];
 
     for(let p = 0; p < productRegisteredInTheLocalStorage.length; p++) {
         let productsQuantity = productRegisteredInTheLocalStorage[p].quantity;
         let productsPrice = productRegisteredInTheLocalStorage[p].price;
-        
-        tableTotalPrice.push(productsQuantity * productsPrice);
-
+        tableTotalPrice.push(productsPrice * productsQuantity);
         console.log(tableTotalPrice);   
     }
 
     const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
-
     const totalPrice = tableTotalPrice.reduce(reducerPrice,0);
-
     console.log(totalPrice);
 
     //-------------------- Affichage du prix total du panier --------------------//
@@ -190,100 +173,6 @@ const totalCartPrice = () => {
     console.log(displayTotalPrice);
 };
 totalCartPrice();
-//-------------------- Envoie du formulaire vers le serveur --------------------//
-//-------------------------------------------------
-const sendOrder = document.getElementById("order");
-
-let firstName = document.getElementById("firstName");
-let lastName = document.getElementById("lastName");
-let address = document.getElementById("address");
-let city = document.getElementById("city");
-let email = document.getElementById("email");
-
-sendOrder.addEventListener("click", (event) => {
-    event.preventDefault(); 
-    
-    if(
-        !firstName.value ||
-        !lastName.value ||
-        !address.value ||
-        !city.value ||
-        !email.value
-    ) {
-        alert("Veuillez renseigner tout les champs de ce formulaire !");
-    }else{
-    
-        let productsOrder = [];
-        for(let indice of productRegisteredInTheLocalStorage) {
-        productsOrder.push(indice._id);
-        };
-
-        const order = {
-            contact : {
-                firstName : firstName.value,
-                lastName : lastName.value,
-                address : address.value,
-                city : city.value,
-                email : email.value,
-            },
-            products : productsOrder,
-        };
-        console.log(order);
-
-        finalPrice = document.getElementById("totalPrice").innerText;
-        console.log(finalPrice);
-
-        const options =  {
-            method: "POST",
-            body: JSON.stringify(order),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
-        };
-
-
-/*
-        const OPTIONS = fetch(`http://localhost:3000/api/products/order`, {
-            method: "POST",
-            body: JSON.stringify(newOrder),
-            headers: {
-                Accept: 'application/json',
-                'Content-type': 'application/json',
-            },
-        });
-        
-        
-            OPTIONS.then( response => {
-                try {
-                    //window.location.href = "/front/html/confirmation.html";
-                    console.log(response);
-                    const data = response.json();
-                    console.log(data);
-                } catch (error) {
-                    console.log(error);
-                }
-            });
-*/
-        fetch("http://localhost:3000/api/products/order", options)
-                .then((response) => response.json())
-                .then((data) => {
-                localStorage.clear();
-                console.log(data)
-                localStorage.setItem("orderId", data.orderId);
-                //localStorage.setItem("total", finalPrice);
-
-                document.location.href = "confirmation.html";
-                })
-                .catch((error) => {
-                alert(`Il y a eu une erreur : ${error}`);
-                });  
-    }
-});
-
-
-
-//----------------------------------------------------
 
 //-------------------- Formulaire --------------------//
 
@@ -399,4 +288,70 @@ validEmail(this);
             emailErrorMsg.style.display="block";
         }
     };
+
+
+//-------------------- Envoie du formulaire et de la commande vers le serveur --------------------//
+
+const sendOrder = document.getElementById("order");
+
+let firstName = document.getElementById("firstName");
+let lastName = document.getElementById("lastName");
+let address = document.getElementById("address");
+let city = document.getElementById("city");
+let email = document.getElementById("email");
+
+sendOrder.addEventListener("click", (event) => {
+    event.preventDefault(); 
+    
+    if(
+        !firstName.value ||
+        !lastName.value ||
+        !address.value ||
+        !city.value ||
+        !email.value
+    ) {
+        alert("Veuillez renseigner tout les champs de ce formulaire !");
+    }else{
+        let productsOrder = [];
+        for(let indice of productRegisteredInTheLocalStorage) {
+        productsOrder.push(indice._id);
+        };
+
+        const order = {
+            contact : {
+                firstName : firstName.value,
+                lastName : lastName.value,
+                address : address.value,
+                city : city.value,
+                email : email.value,
+            },
+            products : productsOrder,
+        };
+       
+        //finalPrice = document.getElementById("totalPrice").innerText;
+        //console.log(finalPrice);
+
+        const options =  {
+            method: "POST",
+            body: JSON.stringify(order),
+            headers: {
+                Accept: 'application/json',
+                'Content-type': 'application/json',
+            },
+        };
+
+        fetch("http://localhost:3000/api/products/order", options)
+                .then((response) => response.json())
+                .then((data) => {
+                console.log(data)
+                localStorage.setItem("orderId", data.orderId);
+                //localStorage.setItem("total", finalPrice);
+                document.location.href = "confirmation.html";
+                localStorage.clear();
+                })
+                .catch((error) => {
+                alert(`Il y a eu une erreur : ${error}`);
+                });  
+    }
+});
 

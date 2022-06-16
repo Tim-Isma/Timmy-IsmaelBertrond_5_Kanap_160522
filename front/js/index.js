@@ -16,6 +16,7 @@ const fetchProducts = async () => {
         console.log(error);
     })   
 };
+fetchProducts();
 
 // Je créé la fonction "productsData" dans laquelle je passe le paramètre "kanaps", afin de pouvoir la manipuler dans ma boucle for.
 const productsData = (kanaps) => {
@@ -37,5 +38,4 @@ const productsData = (kanaps) => {
     console.table(kanaps); 
 };
 
-fetchProducts();
 
