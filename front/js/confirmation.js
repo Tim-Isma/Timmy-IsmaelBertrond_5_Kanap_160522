@@ -2,9 +2,9 @@
 const displayOrderId = () => {
     // On créer notre variable "orderId" dans laquelle on stocke l'élément "orderId" récupéré dans le DOM.
     let orderId = document.getElementById("orderId");
-    // On créer notre variable "searchParams" dans laquelle on stocke l'URLSearchParams, permettant d'accéder à l'argument "orderId" décodés de la requête GET contenue dans l'URL.
+    // On créer notre variable "searchParams" dans laquelle on stocke l'URLSearchParams. Elle va nous retourner l'objet URLSearchParams, nous permettant d'accéder à l'argument "orderId" décodés de la requête GET contenue dans l'URL.
     let searchParams = (new URL(window.location)).searchParams
-    // On créer une autre variable dans laquelle on stocke "searchParams.get('orderId')", afin d'extraire "l'orderId" de l'Url. 
+    // On créer une autre variable dans laquelle on stocke "searchParams.get", afin d'extraire "l'orderId" de l'Url. 
     let order = searchParams.get('orderId');
     // On récupère notre variable "orderId", qu'on intègre à notre innerHTML, qui va nous permettre d'afficher l'orderId dans notre page.
     orderId.innerHTML = order;
